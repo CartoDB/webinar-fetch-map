@@ -1,0 +1,52 @@
+<html>
+  <head>
+    <script src="https://unpkg.com/deck.gl@^8.7.0/dist.min.js"></script>
+    <script src="https://unpkg.com/@deck.gl/carto@^8.7.0/dist.min.js"></script>
+    
+    <script src="https://libs.cartocdn.com/mapbox-gl/v1.13.0/mapbox-gl.js"></script>
+    <link href="https://libs.cartocdn.com/mapbox-gl/v1.13.0/mapbox-gl.css" rel="stylesheet" />
+  </head>
+
+  <body style="margin: 0; padding: 0">
+    <div id="map" style="width: 100vw; height: 100vh;"></div>
+  </body>
+
+  <script type="text/javascript">
+    // Available in the URL of all builder maps
+    const cartoMapId = 'd97d33dc-6394-4f0d-bf2b-b529c5571654';  
+
+    let zoom = 10;
+    let originalLayer;
+    let deckgl;
+ 
+    const renderLayer = () => {
+      newLayer = originalLayer.clone({
+        getPointRadius: (d) => {
+          return zoom < 8 ? 2 : 4;
+        },
+        updateTriggers: {
+          getPointRadius: [zoom]
+        }
+      });
+      deckgl.setProps({layers: [newLayer]});
+    }
+
+    deck.carto.fetchMap({cartoMapId}).then(({initialViewState, mapStyle, layers}) => {
+      const MAP_STYLE = `https://basemaps.cartocdn.com/gl/${mapStyle.styleType}-gl-style/style.json`;
+      
+      originalLayer = layers[0];
+      deckgl = new deck.DeckGL({
+        container: 'map',
+        controller: true,
+        onViewStateChange: ({viewState}) => {
+          zoom = viewState.zoom;
+          renderLayer();
+        },
+        mapStyle: MAP_STYLE,
+        initialViewState,
+        layers
+      });
+    });
+    
+  </script>
+</html>

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
+    <script src="https://unpkg.com/deck.gl@^8.7.0/dist.min.js"></script>
+    <script src="https://unpkg.com/@deck.gl/carto@^8.7.0/dist.min.js"></script>
+    <style>
+      #map {
+        height: 100%;
+      }
+      html,
+      body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+    </style>
+  </head>
+
+  <body>
+    
+    <div id="map"></div>
+    <!-- NOTE: You must include your Google Maps API key in the URL below-->
+    <script
+      src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY_HERE&callback=initMap&libraries=&v=beta"
+      async
+    ></script>
+    
+  </body>
+
+  <script type="text/javascript">
+    function initMap() {
+      const map = new google.maps.Map(document.getElementById("map"), {
+        center: { lat: 40.7181, lng: -100 },
+        zoom: 5,
+        tilt: 0,
+        heading: 0,
+        mapId: '2fccc3b36c22a0e2',
+        disableDefaultUI: true,
+      });
+
+      // Available in the URL of all builder maps
+      const cartoMapId = 'f2534203-eee9-4452-a9a4-6fa2fd97872b'
+
+      deck.carto.fetchMap({cartoMapId: cartoMapId}).then(({layers}) => {
+        const overlay = new deck.GoogleMapsOverlay({layers});
+        overlay.setMap(map);
+      });  
+    }
+  </script>
+</html>
+
